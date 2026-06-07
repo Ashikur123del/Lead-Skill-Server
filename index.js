@@ -35,7 +35,7 @@ async function connectDB() {
 
 async function getCollection(collectionName) {
   const db = await connectDB();
-  return db.collection(collectionName);
+  return db.collection(collectionName);       
 }
 
 
@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/users', async (req, res) => {
   try {
-    const usersCollection = await getCollection("users");
+    const usersCollection = await getCollection("use   rs");
     const users = await usersCollection.find({}).toArray();
     res.status(200).json({ success: true, data: users });
   } catch (error) {
