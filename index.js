@@ -94,7 +94,6 @@ app.patch('/api/users/:id', async (req, res) => {
 
     res.status(200).json({ success: true, message: `স্ট্যাটাস সফলভাবে ${status} করা হয়েছে!` });
   } catch (error) {
-    console.error("Error updating status:", error);
     res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
   }
 });
