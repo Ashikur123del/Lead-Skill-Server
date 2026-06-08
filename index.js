@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 
 app.get('/api/users', async (req, res) => {
   try {
-    const usersCollection = await getCollection("use   rs");
+    const usersCollection = await getCollection("users");
     const users = await usersCollection.find({}).toArray();
     res.status(200).json({ success: true, data: users });
   } catch (error) {
