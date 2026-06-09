@@ -99,6 +99,32 @@ app.patch('/api/users/:id', async (req, res) => {
 });
 
 
+app.post('/api/enquiries', async (req, res) => {
+  try {
+    const enquiryData = req.body;
+    
+    if (!enquiryData.fullName || !enquiryData.email || !enquiryData.message) {
+      return res.status(400).json({ success: false, message: 'সবগুলো ঘর পূরণ করা আবশ্যক!' });
+    }
+
+    const enquiriesCollection = await getCollection("enquiries");
+    const result = await enquiriesCollection.insertOne({
+      ...enquiryData,
+      createdAt: new Date() 
+    });
+    
+    res.status(201).json({ 
+      success: true, 
+      message: 'আপনার মেসেজটি সফলভাবে গৃহীত হয়েছে!', 
+      insertedId: result.insertedId 
+    });
+  } catch (error) {
+    console.error("Error saving enquiry:", error);
+    res.status(500).json({ success: false, message: 'সার্ভারে ইন্টারনাল সমস্যা হয়েছে!' });
+  }
+});
+
+
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
