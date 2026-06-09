@@ -101,8 +101,8 @@ app.patch('/api/users/:id', async (req, res) => {
 
 app.get('/api/enquiries', async (req, res) => { 
     try {
-        const enquiriesCollection = await getCollection("enquiries"); // কালেকশন হবে "enquiries"
-        const enquiries = await enquiriesCollection.find({}).toArray(); // ভেরিয়েবল নাম পরিবর্তন
+        const enquiriesCollection = await getCollection("enquiries"); 
+        const enquiries = await enquiriesCollection.find({}).toArray();  
         res.status(200).json({ success: true, data: enquiries });
     } catch (error) {
         console.error("Error fetching data:", error);
@@ -142,4 +142,4 @@ if (process.env.NODE_ENV !== 'production') {
   });
 }
 
-module.exports = app;
+module.exports = app; 
