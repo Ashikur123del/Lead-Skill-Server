@@ -99,6 +99,17 @@ app.patch('/api/users/:id', async (req, res) => {
 });
 
 
+app.get('/api/enquiries', async (req, res) => { 
+    try {
+        const enquiriesCollection = await getCollection("enquiries"); // কালেকশন হবে "enquiries"
+        const enquiries = await enquiriesCollection.find({}).toArray(); // ভেরিয়েবল নাম পরিবর্তন
+        res.status(200).json({ success: true, data: enquiries });
+    } catch (error) {
+        console.error("Error fetching data:", error);
+        res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
+    }
+});
+
 app.post('/api/enquiries', async (req, res) => {
   try {
     const enquiryData = req.body;
