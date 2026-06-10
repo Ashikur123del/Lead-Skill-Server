@@ -4,10 +4,14 @@ require('dotenv').config();
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT;
+
 const uri = process.env.MONGODB_URI;
 
-app.use(cors());
+
+app.use(cors({
+  origin: ["https://www.leadskillit.com"], 
+  credentials: true
+}));
 
 
 app.use(express.json());
@@ -139,9 +143,9 @@ app.post('/api/enquiries', async (req, res) => {
 
 
 
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-
-  })
+const PORT = process.env.PORT || 8000; // আপনার দেওয়া পোর্ট ৮০০০ কাজ করবে
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
 
 module.exports = app; 
