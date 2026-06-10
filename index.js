@@ -10,7 +10,9 @@ const uri = process.env.MONGODB_URI;
 
 app.use(cors({
   origin: ["https://www.leadskillit.com"], 
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 
