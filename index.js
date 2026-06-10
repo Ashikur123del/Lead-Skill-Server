@@ -4,18 +4,21 @@ require('dotenv').config();
 const cors = require('cors');
 
 const app = express();
-
+const PORT = process.env.PORT || 5000;
 const uri = process.env.MONGODB_URI;
 
-
 app.use(cors({
-  origin: ["https://www.leadskillit.com"], 
-  credentials: true,
-  methods: ["GET", "POST", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization"]
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:3000', 
+    'https://leadskillit.com',
+    'https://www.leadskillit.com'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
+  credentials: true
 }));
 
-
+app.use(cors())
 app.use(express.json());
 
 const client = new MongoClient(uri, {
@@ -144,10 +147,10 @@ app.post('/api/enquiries', async (req, res) => {
 });
 
 
-
-const PORT = process.env.PORT || 8000; // আপনার দেওয়া পোর্ট ৮০০০ কাজ করবে
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
+}
 
 module.exports = app; 
