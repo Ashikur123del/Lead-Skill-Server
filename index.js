@@ -8,10 +8,17 @@ const PORT = process.env.PORT || 5000;
 const uri = process.env.MONGODB_URI;
 
 app.use(cors({
-  origin: ['http://localhost:8000', 'https://leadskillit.com'], // আপনার ডোমেইনটি যোগ করুন
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  origin: [
+    'http://localhost:5173', 
+    'http://localhost:3000', 
+    'https://leadskillit.com',
+    'https://www.leadskillit.com'
+  ],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
   credentials: true
 }));
+
+app.use(cors())
 app.use(express.json());
 
 const client = new MongoClient(uri, {
