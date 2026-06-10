@@ -7,6 +7,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const uri = process.env.MONGODB_URI;
 
+// CORS কনফিগারেশন: শুধুমাত্র একবারই ব্যবহার করুন
 app.use(cors({
   origin: [
     'http://localhost:5173', 
@@ -18,7 +19,6 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(cors())
 app.use(express.json());
 
 const client = new MongoClient(uri, {
@@ -28,7 +28,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   }
 });
-
 
 let dbConnection;
 async function connectDB() {
@@ -44,15 +43,14 @@ async function connectDB() {
   }
 }
 
-
 async function getCollection(collectionName) {
   const db = await connectDB();
   return db.collection(collectionName);       
 }
 
-
+// Routes
 app.get('/', (req, res) => {
-  res.json({ message: 'Server চলছে!' });
+  res.json({ message: 'Server is running perfectly!' });
 });
 
 app.get('/api/users', async (req, res) => {
@@ -61,8 +59,7 @@ app.get('/api/users', async (req, res) => {
     const users = await usersCollection.find({}).toArray();
     res.status(200).json({ success: true, data: users });
   } catch (error) {
-    console.error("Error fetching data:", error);
-    res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
@@ -71,85 +68,35 @@ app.post('/api/users', async (req, res) => {
     const userData = req.body;
     const usersCollection = await getCollection("users");
     const result = await usersCollection.insertOne(userData);
-    
-    res.status(201).json({ 
-      success: true, 
-      message: 'ডেটা সফলভাবে সেভ হয়েছে!', 
-      insertedId: result.insertedId 
-    });
+    res.status(201).json({ success: true, insertedId: result.insertedId });
   } catch (error) {
-    console.error("Error inserting data:", error);
-    res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
-});
-
-app.patch('/api/users/:id', async (req, res) => {
-  try {
-    const userId = req.params.id;
-    const { status } = req.body;
-
-    if (!ObjectId.isValid(userId)) {
-      return res.status(400).json({ success: false, message: 'ভুল আইডি ফরম্যাট!' });
-    }
-
-    const usersCollection = await getCollection("users");
-    
-    const result = await usersCollection.updateOne(
-      { _id: new ObjectId(userId) },
-      { $set: { status: status || "PENDING" } }
-    );
-
-    if (result.matchedCount === 0) {
-      return res.status(404).json({ success: false, message: 'ব্যবহারকারী পাওয়া যায়নি!' });
-    }
-
-    res.status(200).json({ success: true, message: `স্ট্যাটাস সফলভাবে ${status} করা হয়েছে!` });
-  } catch (error) {
-    res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
-  }
-});
-
-app.get('/api/enquiries', async (req, res) => { 
-    try {
-        const enquiriesCollection = await getCollection("enquiries"); 
-        const enquiries = await enquiriesCollection.find({}).toArray();  
-        res.status(200).json({ success: true, data: enquiries });
-    } catch (error) {
-        console.error("Error fetching data:", error);
-        res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
-    }
 });
 
 app.post('/api/enquiries', async (req, res) => {
   try {
     const enquiryData = req.body;
-    
     if (!enquiryData.fullName || !enquiryData.email || !enquiryData.message) {
-      return res.status(400).json({ success: false, message: 'সবগুলো ঘর পূরণ করা আবশ্যক!' });
+      return res.status(400).json({ success: false, message: 'Required fields missing!' });
     }
-
     const enquiriesCollection = await getCollection("enquiries");
     const result = await enquiriesCollection.insertOne({
       ...enquiryData,
       createdAt: new Date() 
     });
-    
-    res.status(201).json({ 
-      success: true, 
-      message: 'আপনার মেসেজটি সফলভাবে গৃহীত হয়েছে!', 
-      insertedId: result.insertedId 
-    });
+    res.status(201).json({ success: true, insertedId: result.insertedId });
   } catch (error) {
-    console.error("Error saving enquiry:", error);
-    res.status(500).json({ success: false, message: 'সার্ভারে ইন্টারনাল সমস্যা হয়েছে!' });
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
+// Vercel এর জন্য এক্সপোর্ট
+module.exports = app;
 
-if (process.env.NODE_ENV !== 'production') {
+// লোকালহোস্টের জন্য লিসেন
+if (require.main === module) {
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
 }
-
-module.exports = app; 
