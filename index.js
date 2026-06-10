@@ -4,19 +4,10 @@ require('dotenv').config();
 const cors = require('cors');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT;
 const uri = process.env.MONGODB_URI;
 
-app.use(cors({
-  origin: [
-    'http://localhost:5173', 
-    'http://localhost:3000', 
-    'https://leadskillit.com',
-    'https://www.leadskillit.com'
-  ],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
-  credentials: true
-}));
+app.use(cors());
 
 
 app.use(express.json());
@@ -148,5 +139,9 @@ app.post('/api/enquiries', async (req, res) => {
 
 
 
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+
+  })
 
 module.exports = app; 
