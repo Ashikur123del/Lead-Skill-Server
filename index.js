@@ -29,6 +29,7 @@ const client = new MongoClient(uri, {
   }
 });
 
+
 let dbConnection;
 async function connectDB() {
   if (dbConnection) return dbConnection; 
@@ -53,7 +54,6 @@ async function getCollection(collectionName) {
 app.get('/', (req, res) => {
   res.json({ message: 'Server চলছে!' });
 });
-
 
 app.get('/api/users', async (req, res) => {
   try {
@@ -108,7 +108,6 @@ app.patch('/api/users/:id', async (req, res) => {
     res.status(500).json({ success: false, message: 'সার্ভারে সমস্যা হয়েছে!' });
   }
 });
-
 
 app.get('/api/enquiries', async (req, res) => { 
     try {
